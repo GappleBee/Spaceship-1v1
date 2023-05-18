@@ -2,13 +2,14 @@
 import pygame
 from pygame.locals import *
 
+pygame.mixer.pre_init(48000, 16, 2)  # The first parameter is frequency, the second is bit depth and the third is channels (1 = mono, 2 = stereo)
 pygame.init()
 
 
 # Constants
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT = 1920, 1080  # Change this to your monitor's resolution
 RESOLUTION = (WIDTH, HEIGHT)
-FPS = 67
+FPS = 67  # Change this to your monitor's refresh rate
 
 # Setting up the window - Includes double buffering to increase performance
 FLAGS = FULLSCREEN | DOUBLEBUF  # Renders the game in a special fullscreen window which increases performance
@@ -74,6 +75,9 @@ class Ship(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
+    fire_sound = pygame.mixer.Sound("assets/Gun+Silencer.mp3")
+    hit_sound = pygame.mixer.Sound("assets/Grenade+1.mp3")
+
     def __init__(self, x, y, width, height):
         super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
@@ -91,6 +95,7 @@ def handle_red_bullets_move(ship, ship2, vel):
         offset = (bullet.rect.x - ship2.x, bullet.rect.y - ship2.y)
         collision = ship2.mask.overlap(bullet.mask, offset)
         if collision:
+            bullet.hit_sound.play()
             ship2.hit()
             ship.remove_bullet(bullet)
 
@@ -105,6 +110,7 @@ def handle_yellow_bullets_move(ship, ship2, vel):
         offset = (bullet.rect.x - ship.x, bullet.rect.y - ship.y)
         collision = ship.mask.overlap(bullet.mask, offset)
         if collision:
+            bullet.hit_sound.play()
             ship.hit()
             ship2.remove_bullet(bullet)
 
@@ -197,7 +203,9 @@ def main():
         if keys[pygame.K_SPACE]:
             if red_bullet_time_elapsed >= BULLET_COOLDOWN:
                 red_bullet_time_elapsed = 0
-                red_ship.add_bullet(Bullet(red_ship.x + red_ship.width, red_ship.y + (red_ship.height / 2), BULLET_WIDTH, BULLET_HEIGHT))
+                red_bullet = Bullet(red_ship.x + red_ship.width, red_ship.y + (red_ship.height / 2), BULLET_WIDTH, BULLET_HEIGHT)
+                red_ship.add_bullet(red_bullet)
+                red_bullet.fire_sound.play()
 
         # Yellow ship
         # Movement
@@ -213,7 +221,9 @@ def main():
         if keys[pygame.K_SEMICOLON]:
             if yellow_bullet_time_elapsed >= BULLET_COOLDOWN:
                 yellow_bullet_time_elapsed = 0
-                yellow_ship.add_bullet(Bullet(yellow_ship.x, yellow_ship.y + (yellow_ship.height / 2), BULLET_WIDTH, BULLET_HEIGHT))
+                yellow_bullet = Bullet(yellow_ship.x, yellow_ship.y + (yellow_ship.height / 2), BULLET_WIDTH, BULLET_HEIGHT)
+                yellow_ship.add_bullet(yellow_bullet)
+                yellow_bullet.fire_sound.play()
 
         handle_game_over(red_ship, yellow_ship)
         handle_red_bullets_move(red_ship, yellow_ship, BULLET_VEL)
