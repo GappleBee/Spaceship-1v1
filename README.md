@@ -5,5 +5,6 @@ This project was mainly for education purposes, starting with the asset folder a
 2. Using .convert() on certain images - Significantly increases performance
 3. Killing dead sprites - Prevents memory leaks
 4. Presetting audio settings - Improves sound quality
+5. Performing operations like (x + y) / 2 instead of x / 2 + y / 2 - Increases performance by reducing the number of calculations needed
 
 Also, to run this you will need to install the PyGame module.
