@@ -4,3 +4,4 @@ This project was mainly for education purposes, starting with the asset folder a
 1. Double buffering - Increases performance
 2. Using .convert() on certain images - Significantly increases performance
 3. Killing dead sprites - Prevents memory leaks
+4. Presetting audio settings - Improves sound quality
